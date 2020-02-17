@@ -20,11 +20,25 @@ user(1).then(data =>{
 
 // better way to write promise response
 // way to make functionn calls in a sequence using promises one after the another so that they work synchronously
-user(1)
+/* user(1)
   .then(data => getRepo(data.username))
   .then(repo => getCommit(repo[0]))
   .then(commits => console.log(commits))
   .catch(err => console.log('error : ',err.message));
+console.log('third'); */
+
+
+// way to make functionn calls in a sequence using async and await one after the another so that they work synchronously
+// async tasks working synchronously using async and await
+async function displayCommits(){
+   
+    var data = await user(1);
+    var repo = await getRepo(data.username);
+    var commits = await getCommit(repo[0]);
+     console.log(commits);  
+}
+
+displayCommits()
 console.log('third');
 
 function user(id){
