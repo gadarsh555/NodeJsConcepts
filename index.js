@@ -1,39 +1,58 @@
 console.log('first');
-user(1,displayUser);
+
+/*  nested function 
+   user(1,(data)=>{
+    getRepo(data.username,(repo)=>{
+        getCommit(repo[0],(commits)=>{
+            console.log('Commits are :',commit);
+        });
+    });
+}); */
+
+/*  a way to write promise response
+user(1).then(data =>{
+    getRepo(data.username).then(repo =>{
+        getCommit(repo[0]).then(commit =>{
+            console.log('Commits are :',commit);
+        });
+    });
+}); */
+
+// better way to write promise response
+// way to make functionn calls in a sequence using promises one after the another so that they work synchronously
+user(1)
+  .then(data => getRepo(data.username))
+  .then(repo => getCommit(repo[0]))
+  .then(commits => console.log(commits))
+  .catch(err => console.log('error : ',err.message));
 console.log('third');
 
-function displayCommit(commit){
-    console.log('Number of Commits are :',commit);
+function user(id){
+    return new Promise( (resolve,reject)=>{
+        setTimeout( ()=> {
+            console.log(" working in database with user "+id+" ...");
+            resolve({id:id , username:'adarsh'});
+          // reject(new Error('error occured'));
+        },2000);
+  });
 }
 
-function displayRepos(repo){
-    //console.log('repos are : ',repo);
-    getCommit(repo[0],displayCommit);
+function getRepo(username){
+    return new Promise( (resolve,reject)=>{
+        setTimeout( ()=>{
+        console.log('Getting All the Repos for '+username+'  .....')
+        resolve (['repo1','repo2','repo3']);
+        /* reject(new Error('error occured')); */
+    },2000);
+  });
 }
 
-function displayUser(data){
-   //console.log(data);
-   getRepo(data.username,displayRepos);
-}
-
-function user(id,callback){
-    setTimeout( ()=> {
-        console.log(" working in database...");
-        callback({id:id , username:'adarsh'});
-    },1000);
-}
-
-function getRepo(username,callback){
-    setTimeout( ()=>{
-       // console.log('username : ',username);
-       console.log('Getting All the Repos.....')
-        callback (['repo1','repo2','repo3']);
-   },2000);
-}
-
-function getCommit(repo,callback){
-    setTimeout(()=>{
-        console.log('Getting all the commits....');
-        callback(10);
-    });
+function getCommit(repo){
+    return new Promise( (resolve,reject)=>{
+        setTimeout(()=>{
+            console.log('Getting all the commits for '+repo+' ....');
+            resolve (10);
+            /* reject(new Error('error occured')); */
+        },2000);
+  });
 }
