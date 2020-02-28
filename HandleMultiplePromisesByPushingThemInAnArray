@@ -1,0 +1,24 @@
+
+
+You can use Promise.all (spec, MDN) for that: It accepts a bunch of individual promises and gives you back a single promise that is resolved when all of the ones you gave it are resolved, or rejected when any of them is rejected.
+
+So if you make doSomeAsyncStuff return a promise, then:
+
+var promises = [];
+
+for(i=0;i<5;i+){
+    promises.push(doSomeAsyncStuff());
+}
+
+Promise.all(promises)
+    .then(() => {
+        for(i=0;i<5;i+){
+            doSomeStuffOnlyWhenTheAsyncStuffIsFinish();    
+        }
+    })
+    .catch((e) => {
+        // handle errors here
+    });
+
+
+for more information - https://2ality.com/2014/10/es6-promises-api.html
