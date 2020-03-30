@@ -1,0 +1,131 @@
+Theory Of Refs by Reactjs.org.in
+-------------------------------------------------------------------------------------------------
+
+Creating Refs
+Refs are created using React.createRef() and attached to React elements via the ref attribute. Refs are commonly assigned to an instance property when a component is constructed so they can be referenced throughout the component.
+
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.myRef = React.createRef();
+  }
+  render() {
+    return <div ref={this.myRef} />;
+  }
+}
+Accessing Refs
+When a ref is passed to an element in render, a reference to the node becomes accessible at the current attribute of the ref.
+
+const node = this.myRef.current;
+The value of the ref differs depending on the type of the node:
+
+When the ref attribute is used on an HTML element, the ref created in the constructor with React.createRef() receives the underlying DOM element as its current property.
+When the ref attribute is used on a custom class component, the ref object receives the mounted instance of the component as its current.
+You may not use the ref attribute on function components because they don’t have instances.
+The examples below demonstrate the differences.
+
+Adding a Ref to a DOM Element
+This code uses a ref to store a reference to a DOM node:
+
+class CustomTextInput extends React.Component {
+  constructor(props) {
+    super(props);
+    // create a ref to store the textInput DOM element
+    this.textInput = React.createRef();
+    this.focusTextInput = this.focusTextInput.bind(this);
+  }
+
+  focusTextInput() {
+    // Explicitly focus the text input using the raw DOM API
+    // Note: we're accessing "current" to get the DOM node
+    this.textInput.current.focus();
+  }
+
+  render() {
+    // tell React that we want to associate the <input> ref
+    // with the `textInput` that we created in the constructor
+    return (
+      <div>
+        <input
+          type="text"
+          ref={this.textInput} />
+        <input
+          type="button"
+          value="Focus the text input"
+          onClick={this.focusTextInput}
+        />
+      </div>
+    );
+  }
+}
+React will assign the current property with the DOM element when the component mounts, and assign it back to null when it unmounts. ref updates happen before componentDidMount or componentDidUpdate lifecycle methods.
+
+Adding a Ref to a Class Component
+If we wanted to wrap the CustomTextInput above to simulate it being clicked immediately after mounting, we could use a ref to get access to the custom input and call its focusTextInput method manually:
+
+class AutoFocusTextInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.textInput = React.createRef();
+  }
+
+  componentDidMount() {
+    this.textInput.current.focusTextInput();
+  }
+
+  render() {
+    return (
+      <CustomTextInput ref={this.textInput} />
+    );
+  }
+}
+Note that this only works if CustomTextInput is declared as a class:
+
+class CustomTextInput extends React.Component {
+  // ...
+}
+Refs and Function Components
+By default, you may not use the ref attribute on function components because they don’t have instances:
+
+function MyFunctionComponent() {
+  return <input />;
+}
+
+class Parent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.textInput = React.createRef();
+  }
+  render() {
+    // This will *not* work!
+    return (
+      <MyFunctionComponent ref={this.textInput} />
+    );
+  }
+}
+If you want to allow people to take a ref to your function component, you can use forwardRef (possibly in conjunction with useImperativeHandle), or you can convert the component to a class.
+
+You can, however, use the ref attribute inside a function component as long as you refer to a DOM element or a class component:
+
+function CustomTextInput(props) {
+  // textInput must be declared here so the ref can refer to it
+  const textInput = useRef(null);
+  
+  function handleClick() {
+    textInput.current.focus();
+  }
+
+  return (
+    <div>
+      <input
+        type="text"
+        ref={textInput} />
+      <input
+        type="button"
+        value="Focus the text input"
+        onClick={handleClick}
+      />
+    </div>
+  );
+}
+
