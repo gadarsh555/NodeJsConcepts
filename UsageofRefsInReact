@@ -1,0 +1,63 @@
+Usage of Refs:
+-------------------------------------------------------------
+
+you can use this.refs here of course.
+
+Please have a look at the documentation.
+
+Here is the code:
+
+var Hello = React.createClass({
+
+  handleUsernameSubmission: function(e){
+    if(e) e.preventDefault();
+    const name = this.refs.usernameItem.value;
+    console.log('Your name is', name);
+  },
+
+  render: function() {
+    return (
+      <div>
+        <form onSubmit={this.handleUsernameSubmission}>
+          <input placeholder="enter username" ref="usernameItem" />
+          <input type="submit" value="Submit username" />
+        </form>
+      </div>
+    )
+  }
+});
+
+
+ReactDOM.render(
+  <Hello name="World" />,
+  document.getElementById('container')
+);
+Also, I've implemented ES6 version of it, it looks better:
+
+class Form extends React.Component {
+
+  handleSubmit = (e) => {
+    if(e) e.preventDefault();
+    const name = this.input.value;
+    console.log('Your name is', name);
+  }
+
+  render(){
+     return (
+      <form onSubmit={this.handleSubmit}>
+        <input placeholder="Your name" type="text" ref={(element) => { this.input = element }} />
+        <button>Submit!</button>
+      </form>
+    )
+  }
+}
+
+ReactDOM.render(<Form />, document.getElementById('root'));
+React supports a special attribute that you can attach to any component. The ref attribute takes a callback function, and the callback will be executed immediately after the component is mounted or unmounted.
+
+When the ref attribute is used on an HTML element, the ref callback receives the underlying DOM element as its argument. React will call the ref callback with the DOM element when the component mounts, and call it with null when it unmounts.
+
+Using the ref callback just to set a property on the class is a common pattern for accessing DOM elements. The preferred way is to set the property in the ref callback like in the above example.
+
+
+

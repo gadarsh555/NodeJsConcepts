@@ -1,0 +1,36 @@
+Usage Of Refs:
+--------------------------------------------------------------------------
+
+You also can use event object.
+
+So your submit will look like that in this case.
+
+class Form extends React.Component {
+
+  handleSubmit = (e) => {
+    if(e) e.preventDefault();
+    const [input] = e.target.children
+    console.log('Your name is', input.value);
+  }
+
+  render(){
+     return (
+      <form onSubmit={this.handleSubmit}>
+        <input placeholder="Your name" type="text"/>
+        <button>Submit!</button>
+      </form>
+    )
+  }
+}
+
+ReactDOM.render(<Form />, document.getElementById('root'));
+So you basically get DOMElement of form using e.target then you also access its children DOMElements and using array spread ES6 feature, you take the first one, which is your input then you use its value, in your console.log call.
+
+Without ES6 spread it will look like.
+
+  handleSubmit = (e) => {
+    if(e) e.preventDefault();
+    const input = e.target.children[0]
+    console.log('Your name is', input.value);
+  }
+Of course, it's usually better to use refs but when you really have that simple example, you can do it this way. But in a real app, I wouldn't rely on elements order etc.

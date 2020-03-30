@@ -1,0 +1,53 @@
+Usage of Refs:
+------------------------------------------------------------------------------
+
+There are a few ways to do this:
+
+1) Get values from array of form elements by index
+
+handleSubmit = (event) => {
+  event.preventDefault();
+  console.log(event.target[0].value)
+}
+2) Using name attribute in html
+
+handleSubmit = (event) => {
+  event.preventDefault();
+  console.log(event.target.elements.username.value) // from elements property
+  console.log(event.target.username.value)          // or directly
+}
+
+<input type="text" name="username"/>
+3) Using refs
+
+handleSubmit = (event) => {
+  console.log(this.inputNode.value)
+}
+
+<input type="text" name="username" ref={node => (this.inputNode = node)}/>
+Full example
+
+class NameForm extends React.Component {
+  handleSubmit = (event) => {
+    event.preventDefault()
+    console.log(event.target[0].value)
+    console.log(event.target.elements.username.value)
+    console.log(event.target.username.value)
+    console.log(this.inputNode.value)
+  }
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Name:
+          <input
+            type="text"
+            name="username"
+            ref={node => (this.inputNode = node)}
+          />
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    )
+  }
+}
