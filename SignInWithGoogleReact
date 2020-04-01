@@ -1,0 +1,77 @@
+Sign In using Google :
+-------------------------------------------------------------------------
+
+Before you begin
+Add Firebase to your JavaScript project.
+Enable Google Sign-In in the Firebase console:
+In the Firebase console, open the Auth section.
+On the Sign in method tab, enable the Google sign-in method and click Save.
+Handle the sign-in flow with the Firebase SDK
+If you are building a web app, the easiest way to authenticate your users with Firebase using their Google Accounts is to handle the sign-in flow with the Firebase JavaScript SDK. (If you want to authenticate a user in Node.js or other non-browser environment, you must handle the sign-in flow manually.)
+
+To handle the sign-in flow with the Firebase JavaScript SDK, follow these steps:
+
+Create an instance of the Google provider object:
+var provider = new firebase.auth.GoogleAuthProvider();
+
+Optional: Specify additional OAuth 2.0 scopes that you want to request from the authentication provider. To add a scope, call addScope. For example:
+provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+
+See the authentication provider documentation.
+Optional: To localize the provider's OAuth flow to the user's preferred language without explicitly passing the relevant custom OAuth parameters, update the language code on the Auth instance before starting the OAuth flow. For example:
+firebase.auth().languageCode = 'pt';
+// To apply the default browser preference instead of explicitly setting it.
+// firebase.auth().useDeviceLanguage();
+
+Optional: Specify additional custom OAuth provider parameters that you want to send with the OAuth request. To add a custom parameter, call setCustomParameters on the initialized provider with an object containing the key as specified by the OAuth provider documentation and the corresponding value. For example:
+provider.setCustomParameters({
+  'login_hint': 'user@example.com'
+});
+
+Reserved required OAuth parameters are not allowed and will be ignored. See the authentication provider reference for more details.
+Authenticate with Firebase using the Google provider object. You can prompt your users to sign in with their Google Accounts either by opening a pop-up window or by redirecting to the sign-in page. The redirect method is preferred on mobile devices.
+To sign in with a pop-up window, call signInWithPopup:
+firebase.auth().signInWithPopup(provider).then(function(result) {
+  // This gives you a Google Access Token. You can use it to access the Google API.
+  var token = result.credential.accessToken;
+  // The signed-in user info.
+  var user = result.user;
+  // ...
+}).catch(function(error) {
+  // Handle Errors here.
+  var errorCode = error.code;
+  var errorMessage = error.message;
+  // The email of the user's account used.
+  var email = error.email;
+  // The firebase.auth.AuthCredential type that was used.
+  var credential = error.credential;
+  // ...
+});
+
+Also notice that you can retrieve the Google provider's OAuth token which can be used to fetch additional data using the Google APIs.
+This is also where you can catch and handle errors. For a list of error codes have a look at the Auth Reference Docs.
+
+To sign in by redirecting to the sign-in page, call signInWithRedirect:
+firebase.auth().signInWithRedirect(provider);
+
+Then, you can also retrieve the Google provider's OAuth token by calling getRedirectResult when your page loads:
+firebase.auth().getRedirectResult().then(function(result) {
+  if (result.credential) {
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    var token = result.credential.accessToken;
+    // ...
+  }
+  // The signed-in user info.
+  var user = result.user;
+}).catch(function(error) {
+  // Handle Errors here.
+  var errorCode = error.code;
+  var errorMessage = error.message;
+  // The email of the user's account used.
+  var email = error.email;
+  // The firebase.auth.AuthCredential type that was used.
+  var credential = error.credential;
+  // ...
+});
+
+This is also where you can catch and handle errors. For a list of error codes have a look at the Auth Reference Docs.
