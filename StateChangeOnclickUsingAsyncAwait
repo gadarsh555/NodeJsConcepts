@@ -1,0 +1,37 @@
+When State was not changing onclick :
+-----------------------------------------------------------------------------------------
+
+So after hours of investigation I managed to find the root cause of the problem. Apparently what was happening is that setState() was updating the week state late. The API was being called with the older version of the state.
+
+To solve the issue, I made use of the async/await:
+
+First update the state and await
+Then call the API to fetch the results.
+The code now looks something like this:
+
+  handleRenderWeek = async action => {
+    switch (action) {
+      case "previous":
+        await this.decrementWeek();
+        break;
+      case "current":
+        await this.resetWeek();
+        break;
+      case "next":
+        await this.incrementWeek();
+        break;
+      default:
+        await this.resetWeek();
+        break;
+    }
+    console.log("Updated State: ", this.state.week);
+    await this.props.fetchCalendarsAndBookings(
+      this.state.week,
+      this.state.year,
+      this.state.page
+    );
+  };
+The cardinal lessons here are two:
+
+setState() is an asynchronous function. Big woo.
+When mixing setState() with redux thunks and other complex async functions, always chain them accordingly with then(), or even simpler, using the async/await syntax.
